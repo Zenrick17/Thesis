@@ -1,0 +1,13 @@
+class_name,thesis_count,actual_count,retained_count,difference,status
+Cat - Dental Disease,316,316,311,0,MATCH
+Cat - Ear Mites,131,131,110,0,MATCH
+Cat - Eye Infection,137,137,103,0,MATCH
+Cat - Ringworm,303,303,242,0,MATCH
+Cat - Scabies,260,260,257,0,MATCH
+Cat - Flea Allergy,271,271,254,0,MATCH
+Dog - Dental Disease,129,129,120,0,MATCH
+Dog - Eye Infection,215,215,181,0,MATCH
+Dog - Fungal Infection,133,133,120,0,MATCH
+Dog - Hot Spots,139,139,90,0,MATCH
+Dog - Mange,604,604,382,0,MATCH
+Dog - Flea Allergy,117,117,113,0,MATCH

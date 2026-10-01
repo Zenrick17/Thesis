@@ -1,0 +1,2 @@
+model,partition,epochs_completed,selected_epoch,macro_F1,accuracy,top3_accuracy,ECE,Brier,images
+T-CBF,validation,25,24,0.674328796318702,0.7076023391812866,0.9152046783625731,0.12274273236592609,0.42764730356881525,342

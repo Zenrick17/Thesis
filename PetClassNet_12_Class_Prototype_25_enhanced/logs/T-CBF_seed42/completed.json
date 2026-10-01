@@ -1,0 +1,59 @@
+{
+  "run_id": "T-CBF_seed42",
+  "configuration": "T-CBF",
+  "augmentation": "T",
+  "loss": "CBF",
+  "seed": 42,
+  "fingerprint": "41216fcb5028ddb152deb67c06a081b06364ceb3e16c0c30ae542d85e72bbd43",
+  "data_fingerprint": "db584e5a3a729195f30e08c40daea1eae030a9ea338b110c4cdac2ea67e56ec9",
+  "protocol_stage": "prototype",
+  "class_names": [
+    "Cat - Dental Disease",
+    "Cat - Ear Mites",
+    "Cat - Eye Infection",
+    "Cat - Ringworm",
+    "Cat - Scabies",
+    "Cat - Flea Allergy",
+    "Dog - Dental Disease",
+    "Dog - Eye Infection",
+    "Dog - Fungal Infection",
+    "Dog - Hot Spots",
+    "Dog - Mange",
+    "Dog - Flea Allergy"
+  ],
+  "best": {
+    "val_macro_f1": 0.6743288040161133,
+    "epoch": 24,
+    "phase": "finetune",
+    "checkpoint": "checkpoints/T-CBF_seed42/best_epoch_024.keras",
+    "sha256": "85135a055c13f91f78e9d7bdc6d8e3c255577b5a3b91468411f914f342a0a967"
+  },
+  "completed_epochs": 25,
+  "active_training_seconds": 983.185606753002,
+  "final_epoch_model_path": "models/T-CBF_seed42/epoch_025.keras",
+  "final_epoch_model_sha256": "0979077ade7f5e10c8f98ac152dd653e9d7f37cbe6b00eec0163cc4434f9385c",
+  "model_path": "models/T-CBF_seed42/best.keras",
+  "model_sha256": "16635e1aabbe95c6b5b8137328958e58b2cb6f47a6ac9d7639ea7c1c8daa48ab",
+  "tensorflow": "2.20.0",
+  "keras": "3.12.0",
+  "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+  "hardware_segments": [
+    {
+      "started_utc": "2026-10-01T13:08:35.978355+00:00",
+      "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+      "gpus": [
+        {
+          "device": "PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')",
+          "compute_capability": [
+            7,
+            5
+          ],
+          "device_name": "Tesla T4"
+        }
+      ],
+      "recovering_committed_run": false,
+      "setup_or_recovery_seconds": 2.2864574019999964
+    }
+  ],
+  "completed_utc": "2026-10-01T13:25:12.213054+00:00"
+}

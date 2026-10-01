@@ -1,0 +1,61 @@
+{
+  "run_id": "T-CBF_seed42",
+  "input_path": "/content/PetClassNet_12_Class_Prototype_25_cache/db584e5a3a729195f30e/Cats/Dental Disease in Cat/13A_jpg.rf.93csRnMkhdXHAzC6M8rf.jpg",
+  "output_directory": "/content/drive/MyDrive/thesis/PetClassNet_12_Class_Prototype_25/gradcam/T-CBF_seed42/20261001T132535_052462Z",
+  "top3": [
+    {
+      "rank": 1,
+      "class_id": 0,
+      "class_name": "Cat - Dental Disease",
+      "model_confidence": 0.6214361786842346,
+      "heatmap": "/content/drive/MyDrive/thesis/PetClassNet_12_Class_Prototype_25/gradcam/T-CBF_seed42/20261001T132535_052462Z/rank1_heatmap.npy",
+      "overlay": "/content/drive/MyDrive/thesis/PetClassNet_12_Class_Prototype_25/gradcam/T-CBF_seed42/20261001T132535_052462Z/rank1_overlay.png",
+      "zero_or_flat_heatmap": false
+    },
+    {
+      "rank": 2,
+      "class_id": 6,
+      "class_name": "Dog - Dental Disease",
+      "model_confidence": 0.30013158917427063,
+      "heatmap": "/content/drive/MyDrive/thesis/PetClassNet_12_Class_Prototype_25/gradcam/T-CBF_seed42/20261001T132535_052462Z/rank2_heatmap.npy",
+      "overlay": "/content/drive/MyDrive/thesis/PetClassNet_12_Class_Prototype_25/gradcam/T-CBF_seed42/20261001T132535_052462Z/rank2_overlay.png",
+      "zero_or_flat_heatmap": false
+    },
+    {
+      "rank": 3,
+      "class_id": 7,
+      "class_name": "Dog - Eye Infection",
+      "model_confidence": 0.02874288521707058,
+      "heatmap": "/content/drive/MyDrive/thesis/PetClassNet_12_Class_Prototype_25/gradcam/T-CBF_seed42/20261001T132535_052462Z/rank3_heatmap.npy",
+      "overlay": "/content/drive/MyDrive/thesis/PetClassNet_12_Class_Prototype_25/gradcam/T-CBF_seed42/20261001T132535_052462Z/rank3_overlay.png",
+      "zero_or_flat_heatmap": false
+    }
+  ],
+  "all_scores": {
+    "Cat - Dental Disease": 0.6214361786842346,
+    "Cat - Ear Mites": 0.0022433658596128225,
+    "Cat - Eye Infection": 0.0005343969678506255,
+    "Cat - Ringworm": 0.0023485219571739435,
+    "Cat - Scabies": 0.003076983382925391,
+    "Cat - Flea Allergy": 0.0023317306768149137,
+    "Dog - Dental Disease": 0.30013158917427063,
+    "Dog - Eye Infection": 0.02874288521707058,
+    "Dog - Fungal Infection": 0.004593223799020052,
+    "Dog - Hot Spots": 0.0050004636868834496,
+    "Dog - Mange": 0.004742499906569719,
+    "Dog - Flea Allergy": 0.024818088859319687
+  },
+  "reminder": "These are image-based predictions among the supported categories, not a confirmed diagnosis. The system cannot determine whether your pet is healthy or assess every condition. Consult a licensed veterinarian about visible abnormalities or other health concerns. Do not use this result to delay consultation or choose treatment.",
+  "target_layer": "top_activation",
+  "score_layer": "class_logits",
+  "settings": {
+    "input_pixels": "RGB float32 [0,255], no additional /255",
+    "resize": "Pillow Image.Resampling.BILINEAR, matching training",
+    "frame_policy": "Fully decode all frames, then use EXIF-oriented first RGB frame",
+    "source_frames": 1,
+    "normalization": "ReLU followed by per-map min/max; flat maps remain zero",
+    "colormap": "jet",
+    "overlay_alpha": 0.4
+  },
+  "interpretation": "Top-3 retain original twelve-class softmax scores; maps show class-score influence, not verified lesions or severity. Zero/flat maps leave the original image unchanged."
+}

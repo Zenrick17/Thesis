@@ -1,0 +1,13 @@
+class_name,train,validation,test
+Cat - Dental Disease,217,47,47
+Cat - Ear Mites,77,16,17
+Cat - Eye Infection,72,16,15
+Cat - Ringworm,170,36,36
+Cat - Scabies,180,39,38
+Cat - Flea Allergy,178,38,38
+Dog - Dental Disease,84,18,18
+Dog - Eye Infection,127,27,27
+Dog - Fungal Infection,84,18,18
+Dog - Hot Spots,63,13,14
+Dog - Mange,268,57,57
+Dog - Flea Allergy,79,17,17

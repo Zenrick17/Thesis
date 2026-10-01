@@ -1,0 +1,263 @@
+{
+  "pipeline_version": "PetClassNet-12class-outline-prototype25-v2",
+  "pipeline_source_sha256": "1d6a62112530c782832e04d59ed08e6b3eff3205c6d73c659c874e46fafbb2e6",
+  "data_fingerprint": "db584e5a3a729195f30e08c40daea1eae030a9ea338b110c4cdac2ea67e56ec9",
+  "class_names": [
+    "Cat - Dental Disease",
+    "Cat - Ear Mites",
+    "Cat - Eye Infection",
+    "Cat - Ringworm",
+    "Cat - Scabies",
+    "Cat - Flea Allergy",
+    "Dog - Dental Disease",
+    "Dog - Eye Infection",
+    "Dog - Fungal Infection",
+    "Dog - Hot Spots",
+    "Dog - Mange",
+    "Dog - Flea Allergy"
+  ],
+  "manifest_sha256": "6516934c3b2b3ea871e6da88d7242a9543ddb6dfc845d4d0664b9855f8d6f63d",
+  "recipe": {
+    "input_size": 224,
+    "batch_size": 32,
+    "warmup_epochs": 5,
+    "finetune_epochs": 20,
+    "warmup_learning_rate": 0.0001,
+    "finetune_learning_rate": 1e-05,
+    "adam_beta_1": 0.9,
+    "adam_beta_2": 0.999,
+    "adam_epsilon": 1e-07,
+    "head_dropout": 0.2,
+    "weight_beta": 0.999,
+    "focal_gamma": 2.0,
+    "probability_clip": 1e-07,
+    "data_threads": 2,
+    "prefetch_batches": 1
+  },
+  "augmentation_policy": {
+    "Cat - Dental Disease": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Cat - Ear Mites": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Cat - Eye Infection": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Cat - Ringworm": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Cat - Scabies": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Cat - Flea Allergy": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Dog - Dental Disease": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Dog - Eye Infection": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Dog - Fungal Infection": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Dog - Hot Spots": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Dog - Mange": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    },
+    "Dog - Flea Allergy": {
+      "rotations": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "allow_flip": true,
+      "brightness_delta": 25.5,
+      "contrast_min": 0.9,
+      "contrast_max": 1.1,
+      "scale_min": 0.9,
+      "scale_max": 1.1,
+      "reviewed": false
+    }
+  },
+  "protocol_stage": "prototype",
+  "configurations": [
+    "G-CE",
+    "T-CBF"
+  ],
+  "seeds": [
+    42
+  ],
+  "training_counts": [
+    217,
+    77,
+    72,
+    170,
+    180,
+    178,
+    84,
+    127,
+    84,
+    63,
+    268,
+    79
+  ],
+  "class_weights": [
+    0.5186164379119873,
+    1.3650377988815308,
+    1.4562305212020874,
+    0.6471058130264282,
+    0.6141308546066284,
+    0.6204286813735962,
+    1.255614995956421,
+    0.8482224345207214,
+    1.255614995956421,
+    1.6568713188171387,
+    0.4303320050239563,
+    1.3317943811416626
+  ],
+  "tensorflow": "2.20.0",
+  "keras": "3.12.0",
+  "preprocessing": "Pillow EXIF-oriented RGB; bilinear224; float32[0,255]; B0 internal rescaling",
+  "epoch_schedule": "5 warm-up + 20 fine-tuning; fixed LR; no early stopping",
+  "selection": "highest twelve-class validation macro-F1 over both phases; earliest exact tie",
+  "fine_phase": "last warm-up epoch; fresh Adam; only blocks5/6/7, top_conv and head; BN frozen",
+  "scope": "outline-defense prototype; a single seed is not evidence of general improvement",
+  "fingerprint": "41216fcb5028ddb152deb67c06a081b06364ceb3e16c0c30ae542d85e72bbd43"
+}

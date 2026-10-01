@@ -1,0 +1,134 @@
+{
+  "fingerprint": "db584e5a3a729195f30e08c40daea1eae030a9ea338b110c4cdac2ea67e56ec9",
+  "data_fingerprint": "54ab3c551495085e396d3b79b533a74a56e88815330c0884ca25fd5d3d35dfc4",
+  "policy": {
+    "version": "petclassnet-12class-prototype25-data-70-15-15-v2",
+    "class_names": [
+      "Cat - Dental Disease",
+      "Cat - Ear Mites",
+      "Cat - Eye Infection",
+      "Cat - Ringworm",
+      "Cat - Scabies",
+      "Cat - Flea Allergy",
+      "Dog - Dental Disease",
+      "Dog - Eye Infection",
+      "Dog - Fungal Infection",
+      "Dog - Hot Spots",
+      "Dog - Mange",
+      "Dog - Flea Allergy"
+    ],
+    "folder_map": {
+      "Cat - Dental Disease": "Cats/Dental Disease in Cat",
+      "Cat - Ear Mites": "Cats/Ear Mites in Cat",
+      "Cat - Eye Infection": "Cats/Eye Infection in Cat",
+      "Cat - Ringworm": "Cats/Ringworm in Cat",
+      "Cat - Scabies": "Cats/Scabies in Cat",
+      "Cat - Flea Allergy": "Cats/Flea Allergy in Cat",
+      "Dog - Dental Disease": "Dogs/Dental Disease in Dog",
+      "Dog - Eye Infection": "Dogs/Eye Infection in Dog",
+      "Dog - Fungal Infection": "Dogs/Fungal Infection in Dog",
+      "Dog - Hot Spots": "Dogs/Hot Spots in Dog",
+      "Dog - Mange": "Dogs/Mange in Dog",
+      "Dog - Flea Allergy": "Dogs/Flea Allergy in Dog"
+    },
+    "representative_per_family": true,
+    "quarantine_exact_conflicts": true,
+    "source_family_rule": "folder-scoped normalized source name; join repeated families with at least one Roboflow marker",
+    "case_mapping_digest": null,
+    "review_mapping_digest": null,
+    "near_screen": true,
+    "near_phash_distance": 4,
+    "near_min_correlation": 0.985,
+    "near_max_rgb_rmse": 0.06,
+    "near_max_log_aspect_difference": 0.15,
+    "split_seed": 42,
+    "fractions": {
+      "train": 0.7,
+      "validation": 0.15,
+      "test": 0.15
+    },
+    "split_algorithm": "64 seeded whole-group allocations; best 8 refined; class and total squared target error",
+    "decode_rule": "Pillow fully decoded EXIF-oriented RGB [0,255]; raw sizes preserved for hashes; multi-frame inputs excluded"
+  },
+  "class_names": [
+    "Cat - Dental Disease",
+    "Cat - Ear Mites",
+    "Cat - Eye Infection",
+    "Cat - Ringworm",
+    "Cat - Scabies",
+    "Cat - Flea Allergy",
+    "Dog - Dental Disease",
+    "Dog - Eye Infection",
+    "Dog - Fungal Infection",
+    "Dog - Hot Spots",
+    "Dog - Mange",
+    "Dog - Flea Allergy"
+  ],
+  "split_info": {
+    "method": "64 seeded greedy whole-group allocations; best 8 refined by class-support-preserving single-group moves",
+    "split_seed": 42,
+    "requested_fractions": {
+      "train": 0.7,
+      "validation": 0.15,
+      "test": 0.15
+    },
+    "selection_score": 0.137623086204251,
+    "selected_trial": 2,
+    "achieved_counts": {
+      "train": 1599,
+      "validation": 342,
+      "test": 342
+    },
+    "achieved_fractions": {
+      "train": 0.7003942181340341,
+      "validation": 0.1498028909329829,
+      "test": 0.1498028909329829
+    },
+    "class_support_counts": [
+      [
+        217,
+        77,
+        72,
+        170,
+        180,
+        178,
+        84,
+        127,
+        84,
+        63,
+        268,
+        79
+      ],
+      [
+        47,
+        16,
+        16,
+        36,
+        39,
+        38,
+        18,
+        27,
+        18,
+        13,
+        57,
+        17
+      ],
+      [
+        47,
+        17,
+        15,
+        36,
+        38,
+        38,
+        18,
+        27,
+        18,
+        14,
+        57,
+        17
+      ]
+    ],
+    "counting_unit": "retained image rows; whole observed groups kept together"
+  },
+  "manifest_sha256": "6516934c3b2b3ea871e6da88d7242a9543ddb6dfc845d4d0664b9855f8d6f63d"
+}

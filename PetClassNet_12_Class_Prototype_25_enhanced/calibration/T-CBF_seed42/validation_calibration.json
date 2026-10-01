@@ -1,0 +1,97 @@
+{
+  "ece": 0.12274273236592609,
+  "ece_bins": 10,
+  "brier_score": 0.42764730356881525,
+  "reliability_bins": [
+    {
+      "bin": 0,
+      "lower": 0.0,
+      "upper": 0.1,
+      "count": 0,
+      "accuracy": null,
+      "confidence": null,
+      "absolute_gap": 0.0
+    },
+    {
+      "bin": 1,
+      "lower": 0.1,
+      "upper": 0.2,
+      "count": 0,
+      "accuracy": null,
+      "confidence": null,
+      "absolute_gap": 0.0
+    },
+    {
+      "bin": 2,
+      "lower": 0.2,
+      "upper": 0.3,
+      "count": 36,
+      "accuracy": 0.3611111111111111,
+      "confidence": 0.26709772398074466,
+      "absolute_gap": 0.09401338713036644
+    },
+    {
+      "bin": 3,
+      "lower": 0.3,
+      "upper": 0.4,
+      "count": 55,
+      "accuracy": 0.45454545454545453,
+      "confidence": 0.35131578987294976,
+      "absolute_gap": 0.10322966467250477
+    },
+    {
+      "bin": 4,
+      "lower": 0.4,
+      "upper": 0.5,
+      "count": 38,
+      "accuracy": 0.6052631578947368,
+      "confidence": 0.45277044412336853,
+      "absolute_gap": 0.1524927137713683
+    },
+    {
+      "bin": 5,
+      "lower": 0.5,
+      "upper": 0.6,
+      "count": 54,
+      "accuracy": 0.6666666666666666,
+      "confidence": 0.553580864712044,
+      "absolute_gap": 0.11308580195462259
+    },
+    {
+      "bin": 6,
+      "lower": 0.6,
+      "upper": 0.7,
+      "count": 50,
+      "accuracy": 0.82,
+      "confidence": 0.6515570390224457,
+      "absolute_gap": 0.1684429609775543
+    },
+    {
+      "bin": 7,
+      "lower": 0.7,
+      "upper": 0.8,
+      "count": 41,
+      "accuracy": 0.9024390243902439,
+      "confidence": 0.7544929370647524,
+      "absolute_gap": 0.14794608732549153
+    },
+    {
+      "bin": 8,
+      "lower": 0.8,
+      "upper": 0.9,
+      "count": 37,
+      "accuracy": 0.972972972972973,
+      "confidence": 0.8484977081015304,
+      "absolute_gap": 0.12447526487144267
+    },
+    {
+      "bin": 9,
+      "lower": 0.9,
+      "upper": 1.0,
+      "count": 31,
+      "accuracy": 1.0,
+      "confidence": 0.9380315446084545,
+      "absolute_gap": 0.061968455391545496
+    }
+  ]
+}

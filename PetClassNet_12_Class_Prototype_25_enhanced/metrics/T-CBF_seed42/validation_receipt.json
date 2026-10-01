@@ -1,0 +1,9 @@
+{
+  "identity": {
+    "protocol": "41216fcb5028ddb152deb67c06a081b06364ceb3e16c0c30ae542d85e72bbd43",
+    "model_sha256": "16635e1aabbe95c6b5b8137328958e58b2cb6f47a6ac9d7639ea7c1c8daa48ab",
+    "partition": "validation",
+    "manifest_sha256": "6516934c3b2b3ea871e6da88d7242a9543ddb6dfc845d4d0664b9855f8d6f63d"
+  },
+  "metrics_sha256": "8d9d31795050e2fba89ad207d1130c7c6363e9f5778de997ed23fa84de8fd4ff"
+}

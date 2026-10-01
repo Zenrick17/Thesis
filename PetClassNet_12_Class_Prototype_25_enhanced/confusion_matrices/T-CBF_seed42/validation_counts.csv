@@ -1,0 +1,13 @@
+true_class,Cat - Dental Disease,Cat - Ear Mites,Cat - Eye Infection,Cat - Ringworm,Cat - Scabies,Cat - Flea Allergy,Dog - Dental Disease,Dog - Eye Infection,Dog - Fungal Infection,Dog - Hot Spots,Dog - Mange,Dog - Flea Allergy
+Cat - Dental Disease,37,0,2,2,2,0,4,0,0,0,0,0
+Cat - Ear Mites,0,14,1,0,0,0,0,0,1,0,0,0
+Cat - Eye Infection,0,0,14,1,0,0,0,1,0,0,0,0
+Cat - Ringworm,0,2,8,19,1,3,0,0,1,0,0,2
+Cat - Scabies,0,0,4,4,29,0,0,0,1,0,1,0
+Cat - Flea Allergy,2,0,2,1,2,27,0,0,1,1,1,1
+Dog - Dental Disease,3,0,0,0,0,0,13,1,1,0,0,0
+Dog - Eye Infection,0,0,3,1,0,0,1,22,0,0,0,0
+Dog - Fungal Infection,0,0,0,0,0,0,1,1,7,0,4,5
+Dog - Hot Spots,0,0,0,1,0,0,0,0,3,8,0,1
+Dog - Mange,0,0,0,1,0,0,0,0,4,2,46,4
+Dog - Flea Allergy,0,0,0,1,0,0,0,0,5,1,4,6

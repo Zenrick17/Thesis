@@ -1,9 +1,0 @@
-{
-  "identity": {
-    "protocol": "41216fcb5028ddb152deb67c06a081b06364ceb3e16c0c30ae542d85e72bbd43",
-    "model_sha256": "c9c8db0e3cbb9a1674a3755bc66711764f7ac034f1550352b2dd5c1c53cb65ac",
-    "partition": "validation",
-    "manifest_sha256": "6516934c3b2b3ea871e6da88d7242a9543ddb6dfc845d4d0664b9855f8d6f63d"
-  },
-  "metrics_sha256": "c4c12163698c48a062105e456abd3bc2409b1801f181c8c0857fa376443bbe23"
-}

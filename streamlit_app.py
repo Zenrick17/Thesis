@@ -2,25 +2,22 @@ r"""PetClassNet: outline-defense disease classification prototype.
 
 HOW TO RUN ON WINDOWS (Python 3.11 or 3.12, 64-bit)
 ------------------------------------------------
-1. Extract the complete prototype package into a folder.
-2. Run each separate Colab notebook for its 25 epochs, then download its model ZIP.
-3. Extract BOTH model ZIPs into this same folder. Expected files:
-       models/baseline.keras       models/baseline.json
-       models/proposed.keras       models/proposed.json
-   Keep each .keras file and its matching .json metadata together.
-4. Open PowerShell in this folder and run:
+1. Keep the baseline and enhanced prototype folders beside this app.
+   Their exports/models/ folders contain the trained models and metadata.
+   Alternatively, place both export pairs in a root models/ folder.
+2. Open PowerShell in this folder and run:
        py -3.12 -m venv .venv
        .\.venv\Scripts\python.exe -m pip install -r requirements.txt
        .\.venv\Scripts\python.exe -m streamlit run streamlit_app.py
    For Python 3.11, replace -3.12 with -3.11 in the first command.
-5. Open http://localhost:8501 if the browser does not open automatically.
-6. Choose a model, upload a clear cat/dog affected-area photograph, and click Classify image.
+3. Open http://localhost:8501 if the browser does not open automatically.
+4. Upload a clear cat/dog affected-area photograph and click Classify image.
    Press Ctrl+C in PowerShell to stop the app.
 
 macOS/Linux: python3.12 -m venv .venv; .venv/bin/python -m pip install -r
 requirements.txt; .venv/bin/python -m streamlit run streamlit_app.py.
 
-No trained weights are bundled: models must be exported from the Colab notebooks.
+The UI displays saved validation results and runs both models on each image.
 This app does inference only. It never trains on or stores uploaded photographs.
 The proposed model changes training augmentation/loss, not the B0 backbone.
 """
@@ -43,6 +40,51 @@ PREPROCESSING_ID = 'exif_rgb_bilinear224_float32_0_255_b0_internal'
 ROLE_LABELS = {'baseline': 'Baseline · G-CE', 'proposed': 'Proposed · T-CBF'}
 APP_DIR = Path(__file__).resolve().parent
 MAX_IMAGE_BYTES = 10 * 1024 * 1024
+EXPORT_DIRS = [APP_DIR / folder / 'exports' / 'models' for folder in (
+    'PetClassNet_12_Class_Prototype_25_baseline',
+    'PetClassNet_12_Class_Prototype_25_enhanced',
+    'PetClassNet_12_Class_Prototype_25')]
+
+
+def discover_exports(model_dir=None):
+    """Find each role independently, retaining validation errors for diagnosis."""
+    directories = [Path(model_dir).expanduser()] if model_dir else [APP_DIR / 'models', *EXPORT_DIRS]
+    available, errors = {}, {}
+    for role in ROLE_LABELS:
+        problems = []
+        for directory in directories:
+            try:
+                available[role] = read_export_metadata(directory, role)
+                break
+            except (OSError, ValueError, KeyError, TypeError) as error:
+                problems.append(f'{directory}: {error}')
+        if role not in available:
+            errors[role] = '\n'.join(problems)
+    return available, errors
+
+
+def exports_match(available):
+    return len(available) == 2 and all(
+        available['baseline'][1][key] == available['proposed'][1][key]
+        for key in ['protocol_fingerprint', 'data_fingerprint', 'manifest_sha256'])
+
+
+def prediction_table(probabilities=None):
+    if probabilities is None:
+        return pd.DataFrame({'Category': CLASS_NAMES, 'Model score (%)': [None] * NUM_CLASSES})
+    order = np.argsort(-probabilities, kind='stable')
+    return pd.DataFrame({'Category': [CLASS_NAMES[int(i)] for i in order],
+                         'Model score (%)': np.round(probabilities[order] * 100, 2)})
+
+
+def prediction_key(image_data, available, show_heatmaps):
+    models = {}
+    for role, (path, metadata) in available.items():
+        stat = path.stat()
+        models[role] = [str(path.resolve()), metadata['model_sha256'],
+                        stat.st_size, stat.st_mtime_ns]
+    return hashlib.sha256(image_data).hexdigest() + json.dumps(
+        {'models': models, 'heatmaps': show_heatmaps}, sort_keys=True)
 
 
 def sha256_file(path):
@@ -79,7 +121,7 @@ def read_export_metadata(model_dir, role):
     return model_path, meta
 
 
-@st.cache_resource(show_spinner='Loading the selected model…')
+@st.cache_resource(show_spinner='Loading the trained model…')
 def load_export(model_path_string, model_sha256, file_size, modified_ns):
     # File size/time are part of the cache key; replacing a model triggers a reload.
     path = Path(model_path_string)
@@ -159,16 +201,13 @@ def heatmap_overlay(rgb, values, flat=False):
 
 
 def render_prediction(role, result, rgb, metadata):
-    st.subheader(ROLE_LABELS[role])
     top = result['top3']
     probabilities = result['probabilities']
     st.write('Highest-scoring category')
     st.write(f'**{CLASS_NAMES[int(top[0])]}**')
     st.metric('Model score', f'{probabilities[top[0]]:.2%}')
-    table = pd.DataFrame({'Rank': [1, 2, 3], 'Category': [CLASS_NAMES[int(i)] for i in top],
-                          'Model score (%)': [round(float(probabilities[i]) * 100, 2) for i in top]})
-    st.dataframe(table, hide_index=True, width='stretch')
-    st.caption('These retain the original twelve-class scores; the top three may total less than 100%.')
+    st.dataframe(prediction_table(probabilities), hide_index=True, width='stretch', height=460)
+    st.caption('All twelve categories, ranked by model score. Higher scores do not establish correctness.')
     if result['maps']:
         for rank, (class_id, heatmap) in enumerate(zip(top, result['maps']), 1):
             st.image(heatmap_overlay(rgb, heatmap['values'], heatmap['flat']),
@@ -176,9 +215,6 @@ def render_prediction(role, result, rgb, metadata):
             if heatmap['flat']:
                 st.caption('No positive, varying heatmap was produced for this class; the original image is shown.')
         st.caption('Heatmaps show areas influencing a class score. They do not verify lesion location or disease severity.')
-    with st.expander('All twelve model scores'):
-        st.dataframe(pd.DataFrame({'Category': CLASS_NAMES, 'Model score (%)': np.round(probabilities * 100, 2)}),
-                     hide_index=True, width='stretch')
     payload = {'model': metadata['configuration'], 'selected_epoch': metadata['selected_epoch'],
                'scope': 'outline-defense prototype; not a confirmed diagnosis',
                'scores': {n: float(v) for n, v in zip(CLASS_NAMES, probabilities)}}
@@ -187,96 +223,114 @@ def render_prediction(role, result, rgb, metadata):
 
 
 def main():
-    st.set_page_config(page_title='PetClassNet · Skin Classifier', page_icon='🐾', layout='wide')
-    st.title('🐾 PetClassNet')
-    st.write('Cat and dog disease classification · outline-defense prototype')
-    st.info('This prototype compares images with 12 supported categories covering skin, eye, ear and dental conditions. It cannot identify healthy pets '
-            'or unsupported conditions. Model scores are not confirmed diagnoses; consult a veterinarian about health concerns.')
+    st.set_page_config(page_title='PetClassNet · Model Comparison', layout='wide')
+    st.title('PetClassNet')
+    st.write('Compare baseline and proposed models on the same cat or dog photograph.')
+    st.caption('Twelve supported categories covering skin, eye, ear and dental conditions. '
+               'Model scores are not confirmed diagnoses.')
     with st.sidebar:
-        st.header('Demo controls')
-        default_dir = os.environ.get('PETCLASSNET_MODELS_DIR', str(APP_DIR / 'models'))
-        model_dir = Path(st.text_input('Model folder', value=default_dir)).expanduser()
-        show_heatmaps = st.checkbox('Show class heatmaps', value=True)
+        st.header('Comparison settings')
+        show_heatmaps = st.checkbox('Show class heatmaps', value=False)
         st.caption('Baseline: geometric augmentation + cross-entropy.\n\n'
                    'Proposed: additional brightness, contrast and scale augmentation + class-balanced focal loss.')
-        with st.expander('How to run this app'):
-            st.markdown('Install Python 3.12 and extract the package. Train both Colab notebooks and extract '
-                        'their model ZIPs into the app folder. Open PowerShell in that folder:')
-            st.code('py -3.12 -m venv .venv\n'
-                    '.\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt\n'
-                    '.\\.venv\\Scripts\\python.exe -m streamlit run streamlit_app.py', language='powershell')
-            st.caption('Open http://localhost:8501. Stop with Ctrl+C. Full instructions are also at the top of this Python file and in README.md.')
-    available, errors = {}, {}
-    for role in ROLE_LABELS:
-        try:
-            available[role] = read_export_metadata(model_dir, role)
-        except (OSError, ValueError, KeyError, TypeError) as error:
-            errors[role] = str(error)
-    if not available:
-        st.warning('No trained model is ready yet. Run the Colab notebooks, then extract the model ZIPs into models/.')
-        st.code('models/\n  baseline.keras\n  baseline.json\n  proposed.keras\n  proposed.json')
-        with st.expander('Model setup details'):
-            for role, error in errors.items():
-                st.write(f'{ROLE_LABELS[role]}: {error}')
-        st.stop()
-    options = list(available)
-    # Proposed seed42 was selected as the demonstration configuration in advance.
-    options = sorted(options, key=lambda r: r != 'proposed')
-    matched = len(available) == 2 and all(available['baseline'][1][k] == available['proposed'][1][k]
-                                       for k in ['protocol_fingerprint', 'data_fingerprint', 'manifest_sha256'])
+        with st.expander('Model file settings'):
+            model_dir = st.text_input('Model folder override', value=os.environ.get('PETCLASSNET_MODELS_DIR', ''),
+                                      help='Leave blank to find the saved exports in the project folders automatically.')
+    available, errors = discover_exports(model_dir.strip() or None)
+    matched = exports_match(available)
+    with st.sidebar.expander('Model file details'):
+        for role, (path, _) in available.items():
+            st.write(f'{ROLE_LABELS[role]}: {path.relative_to(APP_DIR) if path.is_relative_to(APP_DIR) else path}')
+        for role, error in errors.items():
+            st.text(f'{ROLE_LABELS[role]}: {error}')
+    if len(available) == 2 and not matched:
+        st.warning('The exports have different experiment data or settings. Their predictions are shown, '
+                   'but their validation scores are not a matched experiment comparison.')
+
+    st.subheader('Validation results')
+    st.caption('Saved results from training; these evaluate the validation set, not the photograph you upload below.')
+    for column, role in zip(st.columns(2), ROLE_LABELS):
+        with column:
+            st.markdown(f'**{ROLE_LABELS[role]}**')
+            if role in available:
+                meta = available[role][1]
+                validation = meta.get('validation', {})
+                st.dataframe(pd.DataFrame({
+                    'Metric': ['Accuracy', 'Macro-F1', 'Top-3 accuracy', 'Validation images', 'Selected epoch'],
+                    'Value': [f"{validation['top1_accuracy']:.2%}" if 'top1_accuracy' in validation else 'Unavailable',
+                              f"{validation['macro_f1']:.4f}" if 'macro_f1' in validation else 'Unavailable',
+                              f"{validation['top3_accuracy']:.2%}" if 'top3_accuracy' in validation else 'Unavailable',
+                              str(validation.get('n', 'Unavailable')), str(meta['selected_epoch'])]}),
+                    hide_index=True, width='stretch')
+                st.caption(f"{meta['epochs_completed']} epochs completed · seed {meta['seed']}")
+            else:
+                st.info('The trained export is unavailable in this deployment. Add its model export to the project folders.')
     if matched:
-        options.append('compare')
-    elif len(available) == 2:
-        st.warning('These two exports use different experiment data or settings. Re-export a matched pair to enable side-by-side comparison.')
-    selected = st.selectbox('Model', options, format_func=lambda r: 'Compare both models' if r == 'compare' else ROLE_LABELS[r])
-    roles = list(available) if selected == 'compare' else [selected]
-    with st.expander('Training details and validation results'):
-        for role in roles:
-            meta = available[role][1]
-            st.write(f"**{ROLE_LABELS[role]}** · 25 epochs completed · selected epoch {meta['selected_epoch']} · seed 42")
-            validation = meta.get('validation', {})
-            if validation:
-                st.write(f"Validation macro-F1: {validation['macro_f1']:.4f}; validation accuracy: "
-                         f"{validation['top1_accuracy']:.2%}; validation images: {validation['n']}.")
-        st.caption('Validation selects the checkpoint. These single-seed prototype results do not establish general improvement.')
-    uploaded = st.file_uploader('Upload a cat or dog affected-area photograph', type=['jpg', 'jpeg', 'png', 'webp', 'bmp'])
-    if uploaded is None:
-        st.write('Upload an image to begin. Use a clear photograph of the affected area.')
-        return
-    try:
-        rgb = decode_uploaded_image(uploaded.getvalue())
-    except (ValueError, OSError, UnidentifiedImageError, Image.DecompressionBombError) as error:
-        st.error(f'Unable to read the photograph: {error}')
-        return
-    left, right = st.columns([1, 2])
-    with left:
-        st.image(rgb, caption='Uploaded photograph', width='stretch')
-    with right:
-        result_key = hashlib.sha256(uploaded.getvalue()).hexdigest() + json.dumps({
-            'models': {r: available[r][1]['model_sha256'] for r in roles}, 'heatmaps': show_heatmaps}, sort_keys=True)
-        if st.button('Classify image', type='primary'):
-            predictions = {}
-            for role in roles:
+        baseline = available['baseline'][1].get('validation', {})
+        proposed = available['proposed'][1].get('validation', {})
+        if 'top1_accuracy' in baseline and 'top1_accuracy' in proposed:
+            delta = 100 * (proposed['top1_accuracy'] - baseline['top1_accuracy'])
+            st.caption(f'Proposed − baseline validation accuracy: {delta:+.2f} percentage points. '
+                       'These are single-seed prototype results.')
+
+    st.subheader('Classify a photograph')
+    uploaded = st.file_uploader('Upload an image', type=['jpg', 'jpeg', 'png', 'webp', 'bmp'],
+                                help='Use one clear photograph of the affected area, up to 10 MB.')
+    rgb, result_key = None, None
+    if uploaded is not None:
+        try:
+            image_data = uploaded.getvalue()
+            rgb = decode_uploaded_image(image_data)
+            result_key = prediction_key(image_data, available, show_heatmaps)
+        except (ValueError, OSError, UnidentifiedImageError, Image.DecompressionBombError) as error:
+            st.error(f'Unable to read the photograph: {error}')
+    if rgb is not None:
+        preview, instruction = st.columns([1, 2])
+        with preview:
+            st.image(rgb, caption='The same photograph is used for both models.', width='stretch')
+        with instruction:
+            st.write('Run the trained models to compare their predicted categories and scores.')
+            classify = st.button('Classify image', type='primary', disabled=not available)
+        if classify:
+            predictions, inference_errors = {}, {}
+            for role, (path, meta) in available.items():
                 try:
-                    path, meta = available[role]
                     stat = path.stat()
-                    model, gradient_model = load_export(str(path.resolve()), meta['model_sha256'], stat.st_size, stat.st_mtime_ns)
-                    with st.spinner('Classifying the photograph…'):
+                    with st.spinner(f'Running {ROLE_LABELS[role]}…'):
+                        model, gradient_model = load_export(str(path.resolve()), meta['model_sha256'],
+                                                           stat.st_size, stat.st_mtime_ns)
                         predictions[role] = predict_with_gradcam(model, gradient_model, rgb, show_heatmaps)
-                except (OSError, ValueError, RuntimeError, KeyError) as error:
-                    st.error(f'Unable to run {ROLE_LABELS[role]}: {error}')
-                    st.caption('Re-extract the matching model ZIP and install requirements.txt in the app environment.')
-            # Keep the result visible when download/expander controls rerun the app.
-            st.session_state['prediction_result'] = {'key': result_key, 'predictions': predictions}
-        saved = st.session_state.get('prediction_result', {})
-        if saved.get('key') != result_key:
-            st.caption('Click Classify image to run the selected model(s) on this photograph.')
-            return
-        columns = st.columns(len(roles))
-        for column, role in zip(columns, roles):
-            with column:
-                if role in saved.get('predictions', {}):
-                    render_prediction(role, saved['predictions'][role], rgb, available[role][1])
+                except (OSError, ValueError, RuntimeError, KeyError, tf.errors.OpError) as error:
+                    inference_errors[role] = str(error)
+            st.session_state['prediction_result'] = {
+                'key': result_key, 'predictions': predictions, 'errors': inference_errors}
+    saved = st.session_state.get('prediction_result', {})
+    current = result_key is not None and saved.get('key') == result_key
+    predictions = saved.get('predictions', {}) if current else {}
+    inference_errors = saved.get('errors', {}) if current else {}
+    st.subheader('Image results')
+    for column, role in zip(st.columns(2), ROLE_LABELS):
+        with column:
+            st.markdown(f'**{ROLE_LABELS[role]}**')
+            if role in predictions:
+                render_prediction(role, predictions[role], rgb, available[role][1])
+            else:
+                if role in errors:
+                    st.info('Trained model export unavailable.')
+                elif role in inference_errors:
+                    st.error(f'Unable to classify this image: {inference_errors[role]}')
+                else:
+                    st.caption('Upload a photograph and click Classify image to see the scores.')
+                st.dataframe(prediction_table(), hide_index=True, width='stretch', height=460)
+    if len(predictions) == 2:
+        first = int(predictions['baseline']['top3'][0])
+        second = int(predictions['proposed']['top3'][0])
+        if first == second:
+            st.info(f'Both models predict {CLASS_NAMES[first]}.')
+        else:
+            st.info(f'The models disagree: baseline predicts {CLASS_NAMES[first]}; '
+                    f'proposed predicts {CLASS_NAMES[second]}.')
+        st.caption('A known reference label is needed to determine which prediction is correct.')
 
 
 if __name__ == '__main__':
