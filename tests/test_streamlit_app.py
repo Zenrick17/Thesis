@@ -28,7 +28,8 @@ class ModelComparisonTests(unittest.TestCase):
         self.assertEqual(len(page.get('file_uploader')), 1)
         self.assertEqual(len(page.dataframe), 2)
         for table in page.dataframe:
-            self.assertEqual(len(table.value), app.NUM_CLASSES)
+            self.assertEqual(len(table.value), 3)
+            self.assertEqual(table.value['Rank'].tolist(), [1, 2, 3])
             self.assertTrue(table.value['Model score (%)'].isna().all())
 
     def test_uploaded_image_runs_both_real_models_and_results_persist(self):
@@ -50,12 +51,35 @@ class ModelComparisonTests(unittest.TestCase):
                 self.assertEqual(scores.shape, (12,))
                 self.assertTrue(np.isfinite(scores).all())
                 self.assertAlmostEqual(float(scores.sum()), 1, places=5)
-            for table in list(page.dataframe)[2:]:
-                self.assertEqual(len(table.value), 12)
-                self.assertTrue(table.value['Model score (%)'].is_monotonic_decreasing)
+                self.assertEqual(len(result['maps']), 3)
+                for heatmap in result['maps']:
+                    values = heatmap['values']
+                    self.assertEqual(values.ndim, 2)
+                    self.assertTrue(np.isfinite(values).all())
+                    self.assertTrue(((values >= 0) & (values <= 1)).all())
+                    rgb = app.decode_uploaded_image(uploaded.getvalue())
+                    self.assertEqual(app.heatmap_overlay(rgb, values, heatmap['flat']).size, rgb.size)
+            top3_tables = [table.value for table in page.dataframe if 'Rank' in table.value.columns]
+            self.assertEqual(len(top3_tables), 2)
+            for role, table in zip(app.ROLE_LABELS, top3_tables):
+                self.assertEqual(table['Rank'].tolist(), [1, 2, 3])
+                self.assertEqual(table['Category'].tolist(),
+                                 [app.CLASS_NAMES[int(i)] for i in predictions[role]['top3']])
+                self.assertTrue(table['Model score (%)'].is_monotonic_decreasing)
+            self.assertEqual(len(page.dataframe), 6)
             page.run(timeout=30)
             self.assertFalse(page.exception)
             self.assertEqual(len(page.metric), 2)
+            # Grad-CAM can be disabled while top-three predictions remain available.
+            page.checkbox[0].uncheck().run(timeout=30)
+            self.assertEqual(len(page.metric), 0)
+            page.button[0].click().run(timeout=120)
+            self.assertFalse(page.exception)
+            self.assertFalse(page.error)
+            without_heatmaps = page.session_state['prediction_result']['predictions']
+            for role, result in without_heatmaps.items():
+                self.assertFalse(result['maps'])
+                np.testing.assert_allclose(result['probabilities'], predictions[role]['probabilities'])
         # A changed photograph must not show scores from the previous image.
         replacement = io.BytesIO()
         Image.new('RGB', (40, 40), 'blue').save(replacement, format='PNG')

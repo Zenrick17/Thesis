@@ -77,6 +77,14 @@ def prediction_table(probabilities=None):
                          'Model score (%)': np.round(probabilities[order] * 100, 2)})
 
 
+def top3_prediction_table(probabilities=None):
+    if probabilities is None:
+        return pd.DataFrame({'Rank': [1, 2, 3], 'Category': [None] * 3,
+                             'Model score (%)': [None] * 3})
+    return prediction_table(probabilities).head(3).assign(Rank=[1, 2, 3])[
+        ['Rank', 'Category', 'Model score (%)']]
+
+
 def prediction_key(image_data, available, show_heatmaps):
     models = {}
     for role, (path, metadata) in available.items():
@@ -206,12 +214,18 @@ def render_prediction(role, result, rgb, metadata):
     st.write('Highest-scoring category')
     st.write(f'**{CLASS_NAMES[int(top[0])]}**')
     st.metric('Model score', f'{probabilities[top[0]]:.2%}')
-    st.dataframe(prediction_table(probabilities), hide_index=True, width='stretch', height=460)
-    st.caption('All twelve categories, ranked by model score. Higher scores do not establish correctness.')
+    st.markdown('**Top 3 predictions**')
+    st.dataframe(top3_prediction_table(probabilities), hide_index=True, width='stretch')
+    st.caption('Scores retain their original twelve-class probabilities; the top three may total less than 100%.')
+    with st.expander('All twelve model scores'):
+        st.dataframe(prediction_table(probabilities), hide_index=True, width='stretch', height=460)
     if result['maps']:
+        st.markdown('**Grad-CAM · Top 3 predictions**')
+        st.caption('Warmer colors show image regions that contributed more to each category’s score.')
         for rank, (class_id, heatmap) in enumerate(zip(top, result['maps']), 1):
             st.image(heatmap_overlay(rgb, heatmap['values'], heatmap['flat']),
-                     caption=f'{rank}. {CLASS_NAMES[int(class_id)]} · class-specific heatmap', width='stretch')
+                     caption=f'{rank}. {CLASS_NAMES[int(class_id)]} · {probabilities[class_id]:.2%} · Grad-CAM',
+                     width='stretch')
             if heatmap['flat']:
                 st.caption('No positive, varying heatmap was produced for this class; the original image is shown.')
         st.caption('Heatmaps show areas influencing a class score. They do not verify lesion location or disease severity.')
@@ -230,7 +244,8 @@ def main():
                'Model scores are not confirmed diagnoses.')
     with st.sidebar:
         st.header('Comparison settings')
-        show_heatmaps = st.checkbox('Show class heatmaps', value=False)
+        show_heatmaps = st.checkbox('Show Grad-CAM for top 3 predictions', value=True,
+                                    help='Generate a separate heatmap for each of the three highest-scoring categories in both models.')
         st.caption('Baseline: geometric augmentation + cross-entropy.\n\n'
                    'Proposed: additional brightness, contrast and scale augmentation + class-balanced focal loss.')
         with st.expander('Model file settings'):
@@ -321,7 +336,8 @@ def main():
                     st.error(f'Unable to classify this image: {inference_errors[role]}')
                 else:
                     st.caption('Upload a photograph and click Classify image to see the scores.')
-                st.dataframe(prediction_table(), hide_index=True, width='stretch', height=460)
+                st.markdown('**Top 3 predictions**')
+                st.dataframe(top3_prediction_table(), hide_index=True, width='stretch')
     if len(predictions) == 2:
         first = int(predictions['baseline']['top3'][0])
         second = int(predictions['proposed']['top3'][0])
